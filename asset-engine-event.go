@@ -11,7 +11,8 @@ import (
 )
 
 type AssetEngine struct {
-	fs AssetFS
+	fs          AssetFS
+	topicPrefix string
 }
 
 type AssetData struct {
@@ -19,9 +20,16 @@ type AssetData struct {
 	Content []byte `json:"content"`
 }
 
-func NewAssetEngine(fs AssetFS) *AssetEngine {
+func NewAssetData() *AssetData {
+	ad := new(AssetData)
+	ad.Asset = new(Asset)
+	return ad
+}
+
+func NewAssetEngine(fs AssetFS, topicPrefix string) *AssetEngine {
 	a := new(AssetEngine)
 	a.fs = fs
+	a.topicPrefix = topicPrefix
 	return a
 }
 
@@ -33,13 +41,13 @@ func (a *AssetEngine) Write(ctx *kaos.Context, attachReq *AssetData) (*Asset, er
 
 	asset := attachReq.Asset
 	if asset == nil {
-		return nil, fmt.Errorf("Asset is invalid")
+		return nil, fmt.Errorf("asset is invalid")
 	}
 	if asset.ID == "" {
 		asset.PreSave(nil)
 	}
 	if len(attachReq.Content) == 0 {
-		return nil, fmt.Errorf("Content is blank")
+		return nil, fmt.Errorf("content is blank")
 	}
 	if asset.NewFileName != "" {
 		// if newFileName is not blank, replace the asset
@@ -69,13 +77,13 @@ func (a *AssetEngine) Write(ctx *kaos.Context, attachReq *AssetData) (*Asset, er
 	asset.Size = len(attachReq.Content)
 
 	if e = a.fs.Save(newFileName, attachReq.Content); e != nil {
-		return nil, fmt.Errorf("Fail to write file %s: %s", newFileName, e.Error())
+		return nil, fmt.Errorf("fail to write file %s: %s", newFileName, e.Error())
 	}
 
 	if e = h.Save(asset); e != nil {
 		// rollback, delete the file
 		a.fs.Delete(newFileName)
-		return nil, fmt.Errorf("Unable to save file metadata. %s", e.Error())
+		return nil, fmt.Errorf("unable to save file metadata. %s", e.Error())
 	}
 
 	return asset, nil

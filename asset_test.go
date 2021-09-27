@@ -12,10 +12,11 @@ import (
 	"github.com/eaciit/toolkit"
 	cv "github.com/smartystreets/goconvey/convey"
 
-	hc "git.kanosolution.net/kano/kaos/client-engines/http"
-	hd "git.kanosolution.net/kano/kaos/deployer-engines/http"
-	_ "github.com/ariefdarmawan/flexpg"
+	"github.com/ariefdarmawan/datahub"
+	_ "github.com/ariefdarmawan/flexmgo"
 	"github.com/ariefdarmawan/kasset"
+	hd "github.com/kanoteknologi/hd"
+	hc "github.com/kanoteknologi/khc"
 )
 
 func TestAsset(t *testing.T) {
@@ -24,7 +25,7 @@ func TestAsset(t *testing.T) {
 		serviceName = "asset"
 		version     = "v1"
 		log         = appkit.Log()
-		basePath    = os.TempDir()
+		basePath    = filepath.Join(os.TempDir(), "kassettest")
 		hostName    = "localhost:8097"
 	)
 
@@ -34,15 +35,25 @@ func TestAsset(t *testing.T) {
 			os.Remove(basePath)
 		}()
 
+		//os.MkdirAll(filepath.Join(basePath, "db"), 0777)
+		os.MkdirAll(filepath.Join(basePath, "files"), 0777)
+
 		cv.So(e, cv.ShouldBeNil)
+
+		// datahub
+		//dbPath := filepath.Join(basePath, "db")
+		//dbPath = strings.ReplaceAll(dbPath, "\\", "/")
+		h := datahub.NewHub(datahub.GeneralDbConnBuilder("mongodb://localhost:27017/testdb"), true, 10)
+		defer h.Close()
 
 		// service
 		svc := kaos.NewService().
-			SetBasePoint("api/" + version + "/" + serviceName).
-			SetLogger(log)
+			SetBasePoint("api/"+version+"/"+serviceName).
+			SetLogger(log).
+			RegisterDataHub(h, "default")
 
 		// register model
-		eng := kasset.NewAssetEngine(kasset.NewSimpleFS(basePath))
+		eng := kasset.NewAssetEngine(kasset.NewSimpleFS(filepath.Join(basePath, "files")), "")
 		svc.RegisterModel(eng, "assetengine")
 
 		// deployer
@@ -81,7 +92,8 @@ func TestAsset(t *testing.T) {
 
 				cv.Convey("read the file", func() {
 					readResult := new(kasset.AssetData)
-					err := c.CallTo("/api/v1/asset/assetengine/read", readResult, asset.ID)
+					readResult.Asset = new(kasset.Asset)
+					err := c.CallTo("/api/v1/asset/assetengine/read", readResult.Asset, asset.ID)
 					cv.So(err, cv.ShouldBeNil)
 					cv.So(readResult.Asset.ID, cv.ShouldEqual, asset.ID)
 					cv.So(len(readResult.Content), cv.ShouldEqual, len(bs))
@@ -117,8 +129,8 @@ func TestAsset(t *testing.T) {
 				cv.Printf("\nAsset: %s\n", toolkit.JsonString(asset))
 
 				cv.Convey("read the file", func() {
-					readResult := new(kasset.AssetData)
-					err := c.CallTo("/api/v1/asset/assetengine/read", readResult, asset.ID)
+					readResult := kasset.NewAssetData()
+					err := c.CallTo("/api/v1/asset/assetengine/read", readResult.Asset, asset.ID)
 					cv.So(err, cv.ShouldBeNil)
 					cv.So(readResult.Asset.ID, cv.ShouldEqual, asset.ID)
 					cv.So(len(readResult.Content), cv.ShouldEqual, len(bs))
