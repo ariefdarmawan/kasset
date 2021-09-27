@@ -5,23 +5,27 @@ import (
 	"io"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 type S3Asset struct {
-	key, secret, bucket string
-	svc                 *s3.S3
+	key, secret, token, bucket string
+	svc                        *s3.S3
 }
 
-func Newfs(key, secret, bucket string) (*S3Asset, error) {
+func NewS3(key, secret, token, bucket string) (*S3Asset, error) {
 	fs := new(S3Asset)
 	fs.key = key
 	fs.secret = secret
 	fs.bucket = bucket
+	fs.token = token
 
-	sess, e := session.NewSession()
+	sess, e := session.NewSession(
+		aws.NewConfig().
+			WithCredentials(credentials.NewStaticCredentials(key, secret, "")).
+			WithRegion("ap-southeast-1"))
 	if e != nil {
 		return nil, e
 	}
@@ -29,21 +33,29 @@ func Newfs(key, secret, bucket string) (*S3Asset, error) {
 	s3svc := s3.New(sess)
 	listInput := &s3.ListObjectsInput{Bucket: aws.String(bucket), MaxKeys: aws.Int64(16)}
 	if _, e := s3svc.ListObjects(listInput); e != nil {
-		if awsErr, ok := e.(awserr.Error); ok {
-			switch awsErr.Code() {
-			case s3.ErrCodeNoSuchBucket:
-				createInput := &s3.CreateBucketInput{
-					Bucket: aws.String(bucket),
-				}
-				if _, e = s3svc.CreateBucket(createInput); e != nil {
-					return nil, e
-				}
-			default:
-				return nil, e
-			}
-		} else {
+		createInput := &s3.CreateBucketInput{
+			Bucket: aws.String(bucket),
+		}
+		if _, e = s3svc.CreateBucket(createInput); e != nil {
 			return nil, e
 		}
+		/*
+			if awsErr, ok := e.(awserr.Error); ok {
+				switch awsErr.Code() {
+				case s3.ErrCodeNoSuchBucket:
+					createInput := &s3.CreateBucketInput{
+						Bucket: aws.String(bucket),
+					}
+					if _, e = s3svc.CreateBucket(createInput); e != nil {
+						return nil, e
+					}
+				default:
+					return nil, e
+				}
+			} else {
+				return nil, e
+			}
+		*/
 	}
 
 	fs.svc = s3svc
