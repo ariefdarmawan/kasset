@@ -16,7 +16,7 @@ var (
 
 func (ae *AssetEngine) View(ctx *kaos.Context, assetid string) ([]byte, error) {
 	r := ctx.Data().Get("http-request", &http.Request{}).(*http.Request)
-	w := ctx.Data().Get("http-response", &http.Response{}).(http.ResponseWriter)
+	w := ctx.Data().Get("http-writer", &http.Response{}).(http.ResponseWriter)
 
 	assetID := r.URL.Query().Get("id")
 	dl := r.URL.Query().Get("t") == "dl"
