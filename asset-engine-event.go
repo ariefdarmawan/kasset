@@ -7,7 +7,6 @@ import (
 	"git.kanosolution.net/kano/dbflex"
 	"git.kanosolution.net/kano/kaos"
 	"github.com/eaciit/toolkit"
-	"github.com/h2non/filetype"
 )
 
 type AssetEngine struct {
@@ -160,12 +159,4 @@ func (ae *AssetEngine) SaveAttr(ctx *kaos.Context, req *SaveAttrRequest) (string
 		return "", e
 	}
 	return req.ID, nil
-}
-
-func getFileType(buffer []byte) (string, string, error) {
-	kind, err := filetype.Match(buffer)
-	if err != nil {
-		return "", "", err
-	}
-	return kind.MIME.Value, kind.Extension, nil
 }
