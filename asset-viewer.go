@@ -36,7 +36,7 @@ func (ae *AssetEngine) View(ctx *kaos.Context, assetid string) ([]byte, error) {
 
 	content, e := ae.fs.Read(ast.URI)
 	if e != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(e.Error()))
 	}
 

@@ -9,17 +9,20 @@ import (
 type Asset struct {
 	orm.DataModelBase `json:"-" bson:"-"`
 	ID                string `json:"_id" bson:"_id"`
-	Title             string `json:"title"`
-	OriginalFileName  string `json:"originalfilename"`
-	NewFileName       string `json:"newfilename"`
-	URI               string `json:"uri"`
-	ContentType       string `json:"contenttype"`
-	Size              int    `json:"size"`
-	Tags              string `json:"tags"`
+	Title             string
+	OriginalFileName  string
+	NewFileName       string
+	URI               string
+	ContentType       string
+	Size              int
+	Tags              []string
+	Kind              string
+	RefID             string
+	Data              map[string]string
 }
 
 func (a *Asset) TableName() string {
-	return "assets"
+	return "AppAssets"
 }
 
 func (a *Asset) GetID(c dbflex.IConnection) ([]string, []interface{}) {
