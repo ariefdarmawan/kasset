@@ -9,7 +9,7 @@ import (
 
 	"git.kanosolution.net/kano/appkit"
 	"git.kanosolution.net/kano/kaos"
-	"github.com/eaciit/toolkit"
+	"github.com/sebarcode/codekit"
 	cv "github.com/smartystreets/goconvey/convey"
 
 	"github.com/ariefdarmawan/datahub"
@@ -88,7 +88,7 @@ func TestAsset(t *testing.T) {
 				err := c.CallTo("/api/v1/asset/assetengine/write", asset, req)
 				cv.So(err, cv.ShouldBeNil)
 				cv.So(asset.ID, cv.ShouldNotEqual, "")
-				cv.Printf("\nAsset: %s\n", toolkit.JsonString(asset))
+				cv.Printf("\nAsset: %s\n", codekit.JsonString(asset))
 
 				cv.Convey("read the file", func() {
 					readResult := new(kasset.AssetData)
@@ -97,7 +97,7 @@ func TestAsset(t *testing.T) {
 					cv.So(err, cv.ShouldBeNil)
 					cv.So(readResult.Asset.ID, cv.ShouldEqual, asset.ID)
 					cv.So(len(readResult.Content), cv.ShouldEqual, len(bs))
-					cv.Printf("\nAsset: %s\n", toolkit.JsonString(readResult.Asset))
+					cv.Printf("\nAsset: %s\n", codekit.JsonString(readResult.Asset))
 					cv.Printf("Content: %d\n", len(readResult.Content))
 
 					cv.Convey("delete the file", func() {
@@ -126,7 +126,7 @@ func TestAsset(t *testing.T) {
 				err := c.CallTo("/api/v1/asset/assetengine/write", asset, req)
 				cv.So(err, cv.ShouldBeNil)
 				cv.So(asset.ID, cv.ShouldNotEqual, "")
-				cv.Printf("\nAsset: %s\n", toolkit.JsonString(asset))
+				cv.Printf("\nAsset: %s\n", codekit.JsonString(asset))
 
 				cv.Convey("read the file", func() {
 					readResult := kasset.NewAssetData()
@@ -134,7 +134,7 @@ func TestAsset(t *testing.T) {
 					cv.So(err, cv.ShouldBeNil)
 					cv.So(readResult.Asset.ID, cv.ShouldEqual, asset.ID)
 					cv.So(len(readResult.Content), cv.ShouldEqual, len(bs))
-					cv.Printf("\nAsset: %s\n", toolkit.JsonString(readResult.Asset))
+					cv.Printf("\nAsset: %s\n", codekit.JsonString(readResult.Asset))
 					cv.Printf("Content: %d\n", len(readResult.Content))
 				})
 			})

@@ -6,7 +6,7 @@ import (
 
 	"git.kanosolution.net/kano/dbflex"
 	"git.kanosolution.net/kano/kaos"
-	"github.com/eaciit/toolkit"
+	"github.com/sebarcode/codekit"
 )
 
 type AssetEngine struct {
@@ -69,7 +69,7 @@ func (a *AssetEngine) Write(ctx *kaos.Context, attachReq *AssetData) (*Asset, er
 	newFileName := asset.NewFileName
 	if newFileName == "" {
 		newFileName = fmt.Sprintf("%s_%s%s",
-			asset.ID, toolkit.GenerateRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 6),
+			asset.ID, codekit.GenerateRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 6),
 			ext)
 	}
 	asset.URI = newFileName
