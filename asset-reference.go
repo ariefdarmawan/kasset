@@ -8,10 +8,10 @@ import (
 type AssetReference struct {
 	orm.DataModelBase `json:"-" bson:"-"`
 	ID                string `json:"_id" bson:"_id"`
-	AssetID           string `json:"assetid"`
-	RefType           string `json:"reftype"`
-	RefID             string `json:"refid"`
-	Feature           string `json:"feature"`
+	AssetID           string
+	RefType           string
+	RefID             string
+	Feature           string
 }
 
 func (ar *AssetReference) TableName() string {
@@ -24,4 +24,11 @@ func (ar *AssetReference) GetID(_ dbflex.IConnection) ([]string, []interface{}) 
 
 func (ar *AssetReference) SetID(keys ...interface{}) {
 	ar.ID = keys[0].(string)
+}
+
+func (ar *AssetReference) Indexes() []dbflex.DbIndex {
+	return []dbflex.DbIndex{
+		{Name: "AssetIDIndex", IsUnique: false, Fields: []string{"AssetID"}},
+		{Name: "RefIndex", IsUnique: true, Fields: []string{"RefType", "RefID", "AssetID"}},
+	}
 }

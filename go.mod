@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	git.kanosolution.net/kano/appkit v0.0.3
-	git.kanosolution.net/kano/dbflex v1.2.1
+	git.kanosolution.net/kano/dbflex v1.2.5
 	git.kanosolution.net/kano/kaos v0.2.1
 	github.com/ariefdarmawan/datahub v0.2.2
 	github.com/ariefdarmawan/flexmgo v0.3.0
@@ -15,4 +15,5 @@ require (
 	github.com/kanoteknologi/khc v0.0.1
 	github.com/sebarcode/codekit v0.1.2
 	github.com/smartystreets/goconvey v1.7.2
+	go.mongodb.org/mongo-driver v1.9.1
 )

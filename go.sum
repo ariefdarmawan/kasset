@@ -61,8 +61,9 @@ git.kanosolution.net/kano/appkit v0.0.3/go.mod h1:R9lSLmv987MZYIcmW5QRFySaEGASi/
 git.kanosolution.net/kano/dbflex v1.0.11/go.mod h1:JwhKlws6r/uBbPE126aJpHbq3x4iugF0ViJlE/fFg/k=
 git.kanosolution.net/kano/dbflex v1.0.12/go.mod h1:JwhKlws6r/uBbPE126aJpHbq3x4iugF0ViJlE/fFg/k=
 git.kanosolution.net/kano/dbflex v1.1.0/go.mod h1:3YZtv6TD1Io6khYnzdoOmyzGqt9lf03zp0LQBLSMQaQ=
-git.kanosolution.net/kano/dbflex v1.2.1 h1:SllhA0qMcF1BHOYMdXIsIj1cbqohj2XgFp+7c4ZrZls=
 git.kanosolution.net/kano/dbflex v1.2.1/go.mod h1:kMbDllDjd+lwhCO4XRrCJP1kP0X46iPPrNG7hblrbcA=
+git.kanosolution.net/kano/dbflex v1.2.5 h1:NmyVT6ZNNkMNYfhVW8of/YfyF2E2KWNjY4XyFD8siy8=
+git.kanosolution.net/kano/dbflex v1.2.5/go.mod h1:FQZKWzBpYXNalY8syaXBjVBXyg58hIuUXQuIB08l7Zw=
 git.kanosolution.net/kano/kaos v0.2.0/go.mod h1:NwMLC/+BhCXZ5Papa2nlsgay/PnGNd0hmz/v/q9oK6Y=
 git.kanosolution.net/kano/kaos v0.2.1 h1:61/5c1eIPqvmkeLsc41K0/4lk6fivH6aO8w7KyRQNow=
 git.kanosolution.net/kano/kaos v0.2.1/go.mod h1:xP4X/MUpDylSD8TavXFKNqb7fljbjjR2Aw8vA131xUM=
@@ -661,6 +662,7 @@ golang.org/x/net v0.0.0-20210316092652-d523dce5a7f4/go.mod h1:RBQZq4jEuRlivfhVLd
 golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
 golang.org/x/net v0.0.0-20210410081132-afb366fc7cd1/go.mod h1:9tjilg8BloeKEkVJvy7fQ90B1CfIiPueXVOjqfkSzI8=
 golang.org/x/net v0.0.0-20210503060351-7fd8e65b6420/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
 golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
 golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd/go.mod h1:CfG3xpIq0wQ8r1q4Su4UZFWDARRcnwPjda9FqA0JpMk=
 golang.org/x/net v0.0.0-20220225172249-27dd8689420f/go.mod h1:CfG3xpIq0wQ8r1q4Su4UZFWDARRcnwPjda9FqA0JpMk=
@@ -776,6 +778,7 @@ golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf/go.mod h1:oPkhp1MJrh7nUepCBc
 golang.org/x/sys v0.0.0-20210908233432-aa78b53d3365/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.0.0-20211019181941-9d821ace8654/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211124211545-fe61309f8881/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211210111614-af8b64212486/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=

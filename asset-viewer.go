@@ -3,20 +3,24 @@ package kasset
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"git.kanosolution.net/kano/kaos"
+	"github.com/sebarcode/codekit"
 )
 
 var (
 	Event kaos.EventHub
 	Topic string
-
-	e error
 )
 
 func (ae *AssetEngine) View(ctx *kaos.Context, assetid string) ([]byte, error) {
-	r := ctx.Data().Get("http-request", &http.Request{}).(*http.Request)
-	w := ctx.Data().Get("http-writer", &http.Response{}).(http.ResponseWriter)
+	r, rOK := ctx.Data().Get("http-request", nil).(*http.Request)
+	w, wOK := ctx.Data().Get("http-writer", nil).(http.ResponseWriter)
+
+	if !rOK || !wOK {
+		return nil, errors.New("not a http compliant request")
+	}
 
 	assetID := r.URL.Query().Get("id")
 	dl := r.URL.Query().Get("t") == "dl"
@@ -28,9 +32,8 @@ func (ae *AssetEngine) View(ctx *kaos.Context, assetid string) ([]byte, error) {
 	}
 
 	ast := new(Asset)
-	if e = Event.Publish(Topic, assetID, ast); e != nil {
-		//w.WriteHeader(http.StatusInternalServerError)
-		//w.Write([]byte(e.Error()))
+	h, _ := ctx.DefaultHub()
+	if e := h.GetByID(ast, assetID); e != nil {
 		return nil, e
 	}
 
@@ -41,13 +44,19 @@ func (ae *AssetEngine) View(ctx *kaos.Context, assetid string) ([]byte, error) {
 	}
 
 	if dl {
-		w.Header().Set("Content-Disposition", "attachment; filename=\""+ast.OriginalFileName+"\"")
+		if ast.OriginalFileName != "" {
+			w.Header().Set("Content-Disposition", "attachment; filename=\""+ast.OriginalFileName+"\"")
+		} else {
+			newFileName := codekit.GenerateRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 16)
+			uriParts := strings.Split(ast.URI, ".")
+			newFileName += "." + uriParts[len(uriParts)-1]
+			w.Header().Set("Content-Disposition", "attachment; filename=\""+newFileName+"\"")
+		}
 	}
 	w.Header().Set("Content-Type", ast.ContentType)
 	w.Write(content)
 
 	ctx.Data().Set("kaos-command-1", "stop")
-
 	return content, nil
 }
 

@@ -11,21 +11,24 @@ import (
 )
 
 type S3Asset struct {
-	key, secret, token, bucket string
-	svc                        *s3.S3
+	//key, secret, token, bucket string
+	bucket string
+	svc    *s3.S3
 }
 
 func NewS3(key, secret, token, bucket string) (*S3Asset, error) {
-	fs := new(S3Asset)
-	fs.key = key
-	fs.secret = secret
-	fs.bucket = bucket
-	fs.token = token
+	cfg := aws.NewConfig().
+		WithCredentials(credentials.NewStaticCredentials(key, secret, "")).
+		WithRegion("ap-southeast-1")
 
-	sess, e := session.NewSession(
-		aws.NewConfig().
-			WithCredentials(credentials.NewStaticCredentials(key, secret, "")).
-			WithRegion("ap-southeast-1"))
+	return NewS3WithConfig(bucket, cfg)
+}
+
+func NewS3WithConfig(bucket string, config *aws.Config) (*S3Asset, error) {
+	fs := new(S3Asset)
+	fs.bucket = bucket
+
+	sess, e := session.NewSession(config)
 	if e != nil {
 		return nil, e
 	}
@@ -39,23 +42,6 @@ func NewS3(key, secret, token, bucket string) (*S3Asset, error) {
 		if _, e = s3svc.CreateBucket(createInput); e != nil {
 			return nil, e
 		}
-		/*
-			if awsErr, ok := e.(awserr.Error); ok {
-				switch awsErr.Code() {
-				case s3.ErrCodeNoSuchBucket:
-					createInput := &s3.CreateBucketInput{
-						Bucket: aws.String(bucket),
-					}
-					if _, e = s3svc.CreateBucket(createInput); e != nil {
-						return nil, e
-					}
-				default:
-					return nil, e
-				}
-			} else {
-				return nil, e
-			}
-		*/
 	}
 
 	fs.svc = s3svc

@@ -1,9 +1,9 @@
 package kasset
 
 import (
-	"git.kanosolution.net/kano/appkit"
 	"git.kanosolution.net/kano/dbflex"
 	"git.kanosolution.net/kano/dbflex/orm"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Asset struct {
@@ -14,6 +14,7 @@ type Asset struct {
 	NewFileName       string
 	URI               string
 	ContentType       string
+	Extension         string
 	Size              int
 	Tags              []string
 	Kind              string
@@ -37,7 +38,16 @@ func (a *Asset) SetID(keys ...interface{}) {
 
 func (a *Asset) PreSave(c dbflex.IConnection) error {
 	if a.ID == "" {
-		a.ID = appkit.MakeID("", 32)
+		a.ID = primitive.NewObjectID().Hex()
 	}
 	return nil
+}
+
+func (a *Asset) Indexes() []dbflex.DbIndex {
+	return []dbflex.DbIndex{
+		{Name: "KindRefIndex", IsUnique: false, Fields: []string{"Kind", "RefID"}},
+		{Name: "OriginalFileNameIndex", IsUnique: false, Fields: []string{"OriginalFileName"}},
+		{Name: "NewFileName", IsUnique: false, Fields: []string{"NewFileName"}},
+		{Name: "TagIndex", IsUnique: false, Fields: []string{"Tags"}},
+	}
 }

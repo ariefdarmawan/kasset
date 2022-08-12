@@ -25,7 +25,7 @@ func (ae *AssetAPIEngine) FindByRefID(ctx *kaos.Context, req *ReferenceRequest) 
 
 	ars := []*AssetReference{}
 	if e = h.Gets(new(AssetReference),
-		dbflex.NewQueryParam().SetWhere(dbflex.And(dbflex.Eq("reftype", req.RefType), dbflex.Eq("refid", req.RefID))),
+		dbflex.NewQueryParam().SetWhere(dbflex.And(dbflex.Eq("RefType", req.RefType), dbflex.Eq("RefID", req.RefID))),
 		&ars); e != nil {
 		return res, fmt.Errorf("unable to get reference. %s", e.Error())
 	}
