@@ -14,7 +14,6 @@ type Asset struct {
 	NewFileName       string
 	URI               string
 	ContentType       string
-	Extension         string
 	Size              int
 	Tags              []string
 	Kind              string

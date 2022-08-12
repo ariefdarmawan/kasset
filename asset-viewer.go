@@ -15,21 +15,19 @@ var (
 )
 
 func (ae *AssetEngine) View(ctx *kaos.Context, assetid string) ([]byte, error) {
-	r, rOK := ctx.Data().Get("http-request", nil).(*http.Request)
-	w, wOK := ctx.Data().Get("http-writer", nil).(http.ResponseWriter)
+	r, rOK := ctx.Data().Get("http_request", nil).(*http.Request)
+	w, wOK := ctx.Data().Get("http_writer", nil).(http.ResponseWriter)
 
-	if !rOK || !wOK {
+	if !rOK {
 		return nil, errors.New("not a http compliant request")
+	}
+
+	if !wOK {
+		return nil, errors.New("not a http compliant writer")
 	}
 
 	assetID := r.URL.Query().Get("id")
 	dl := r.URL.Query().Get("t") == "dl"
-
-	if Event == nil {
-		//w.WriteHeader(http.StatusInternalServerError)
-		//w.Write([]byte("EventHub is not initialized"))
-		return nil, errors.New("eventhub is not initialized")
-	}
 
 	ast := new(Asset)
 	h, _ := ctx.DefaultHub()

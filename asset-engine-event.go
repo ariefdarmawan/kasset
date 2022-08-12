@@ -1,6 +1,7 @@
 package kasset
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io"
 
@@ -15,8 +16,13 @@ type AssetEngine struct {
 }
 
 type AssetData struct {
-	Asset   *Asset `json:"asset"`
-	Content []byte `json:"content"`
+	Asset   *Asset
+	Content []byte
+}
+
+type AssetDataBase64 struct {
+	Asset   *Asset
+	Content string
 }
 
 func NewAssetData() *AssetData {
@@ -86,6 +92,19 @@ func (a *AssetEngine) Write(ctx *kaos.Context, attachReq *AssetData) (*Asset, er
 	}
 
 	return asset, nil
+}
+
+func (a *AssetEngine) WriteBase64(ctx *kaos.Context, attachReq *AssetDataBase64) (*Asset, error) {
+	bs, e := base64.StdEncoding.DecodeString(attachReq.Content)
+	if e != nil {
+		return nil, fmt.Errorf("fail to decode content. %s", e.Error())
+	}
+
+	req := new(AssetData)
+	req.Asset = attachReq.Asset
+	req.Content = bs
+
+	return a.Write(ctx, req)
 }
 
 func (a *AssetEngine) Read(ctx *kaos.Context, id string) (*Asset, error) {
