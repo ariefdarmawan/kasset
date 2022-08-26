@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"strings"
 
 	"git.kanosolution.net/kano/dbflex"
 	"git.kanosolution.net/kano/kaos"
@@ -65,13 +66,33 @@ func (a *AssetEngine) Write(ctx *kaos.Context, attachReq *AssetData) (*Asset, er
 
 	// save the file
 	ext := ""
-	asset.ContentType, ext, _ = getFileType(attachReq.Content[:512])
-	if ext != "" && ext[0] != '.' {
-		ext = "." + ext
+	ext1 := ""
+	fileNameParts := strings.Split(attachReq.Asset.OriginalFileName, ".")
+	if len(fileNameParts) > 1 {
+		ext = "." + fileNameParts[len(fileNameParts)-1]
+	} else {
+		ext = ".txt"
 	}
-	if asset.ContentType == "" {
-		return nil, fmt.Errorf("unknown file type")
+
+	contentType := ""
+	if asset.ContentType != "" {
+		contentType, ext1, _ = getFileType(attachReq.Content[:512])
+		if ext == "" {
+			if ext1 != "" && ext1[0] != '.' {
+				ext1 = "." + ext
+			}
+			ext = ext1
+		}
+
+		if asset.ContentType == "" {
+			asset.ContentType = contentType
+		}
+
+		if asset.ContentType == "" {
+			return nil, fmt.Errorf("unknown file type")
+		}
 	}
+
 	newFileName := asset.NewFileName
 	if newFileName == "" {
 		newFileName = fmt.Sprintf("%s_%s%s",
