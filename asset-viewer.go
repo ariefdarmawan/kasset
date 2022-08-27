@@ -54,7 +54,7 @@ func (ae *AssetEngine) View(ctx *kaos.Context, assetid string) ([]byte, error) {
 	w.Header().Set("Content-Type", ast.ContentType)
 	w.Write(content)
 
-	ctx.Data().Set("kaos-command-1", "stop")
+	ctx.Data().Set("kaos_command_1", "stop")
 	return content, nil
 }
 
