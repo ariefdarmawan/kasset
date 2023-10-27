@@ -40,9 +40,10 @@ func NewAssetEngine(fs AssetFS, topicPrefix string) *AssetEngine {
 }
 
 func (a *AssetEngine) Write(ctx *kaos.Context, attachReq *AssetData) (*Asset, error) {
-	h, e := ctx.DefaultHub()
-	if e != nil {
-		return nil, e
+	var e error
+	h := GetTenantDBFromContext(ctx)
+	if h == nil {
+		return nil, fmt.Errorf("missing: db")
 	}
 
 	asset := attachReq.Asset
@@ -115,7 +116,7 @@ func (a *AssetEngine) Write(ctx *kaos.Context, attachReq *AssetData) (*Asset, er
 	return asset, nil
 }
 
-func (a *AssetEngine) WriteBase64(ctx *kaos.Context, attachReq *AssetDataBase64) (*Asset, error) {
+func (a *AssetEngine) WriteWithContent(ctx *kaos.Context, attachReq *AssetDataBase64) (*Asset, error) {
 	bs, e := base64.StdEncoding.DecodeString(attachReq.Content)
 	if e != nil {
 		return nil, fmt.Errorf("fail to decode content. %s", e.Error())
@@ -129,13 +130,14 @@ func (a *AssetEngine) WriteBase64(ctx *kaos.Context, attachReq *AssetDataBase64)
 }
 
 func (a *AssetEngine) Read(ctx *kaos.Context, id string) (*Asset, error) {
-	h, e := ctx.DefaultHub()
-	if e != nil {
-		return nil, e
+	h := GetTenantDBFromContext(ctx)
+	if h == nil {
+		return nil, fmt.Errorf("missing: db")
 	}
 
 	ast := new(Asset)
 	ast.ID = id
+	var e error
 	if e = h.Get(ast); e != nil {
 		return nil, e
 	}
@@ -151,10 +153,12 @@ func (a *AssetEngine) Read(ctx *kaos.Context, id string) (*Asset, error) {
 }
 
 func (ae *AssetEngine) Delete(ctx *kaos.Context, id string) (int, error) {
-	h, e := ctx.DefaultHub()
-	if e != nil {
-		return 0, e
+	h := GetTenantDBFromContext(ctx)
+	if h == nil {
+		return 0, fmt.Errorf("missing: db")
 	}
+
+	var e error
 	a := new(Asset)
 	a.ID = id
 	if e = h.Get(a); e != nil {
@@ -181,10 +185,12 @@ type SaveAttrRequest struct {
 }
 
 func (ae *AssetEngine) SaveAttr(ctx *kaos.Context, req *SaveAttrRequest) (string, error) {
-	h, e := ctx.DefaultHub()
-	if e != nil {
-		return "", e
+	h := GetTenantDBFromContext(ctx)
+	if h == nil {
+		return "", fmt.Errorf("missing: db")
 	}
+
+	var e error
 	a := new(Asset)
 	a.ID = req.ID
 	if e = h.Get(a); e != nil {

@@ -3,6 +3,7 @@ package kasset
 import (
 	"git.kanosolution.net/kano/dbflex"
 	"git.kanosolution.net/kano/dbflex/orm"
+	"github.com/sebarcode/codekit"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -18,7 +19,7 @@ type Asset struct {
 	Tags              []string
 	Kind              string
 	RefID             string
-	Data              map[string]string
+	Data              codekit.M
 }
 
 func (a *Asset) TableName() string {

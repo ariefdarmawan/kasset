@@ -2,6 +2,7 @@ package kasset
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -30,7 +31,10 @@ func (ae *AssetEngine) View(ctx *kaos.Context, assetid string) ([]byte, error) {
 	dl := r.URL.Query().Get("t") == "dl"
 
 	ast := new(Asset)
-	h, _ := ctx.DefaultHub()
+	h := GetTenantDBFromContext(ctx)
+	if h == nil {
+		return []byte{}, fmt.Errorf("missing: db")
+	}
 	if e := h.GetByID(ast, assetID); e != nil {
 		return nil, e
 	}

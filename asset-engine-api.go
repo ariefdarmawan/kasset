@@ -18,13 +18,13 @@ type ReferenceRequest struct {
 
 func (ae *AssetAPIEngine) FindByRefID(ctx *kaos.Context, req *ReferenceRequest) ([]*Asset, error) {
 	res := []*Asset{}
-	h, e := ctx.DefaultHub()
-	if e != nil {
-		return res, e
+	h := GetTenantDBFromContext(ctx)
+	if h == nil {
+		return nil, fmt.Errorf("missing: db")
 	}
 
 	ars := []*AssetReference{}
-	if e = h.Gets(new(AssetReference),
+	if e := h.Gets(new(AssetReference),
 		dbflex.NewQueryParam().SetWhere(dbflex.And(dbflex.Eq("RefType", req.RefType), dbflex.Eq("RefID", req.RefID))),
 		&ars); e != nil {
 		return res, fmt.Errorf("unable to get reference. %s", e.Error())
@@ -33,7 +33,7 @@ func (ae *AssetAPIEngine) FindByRefID(ctx *kaos.Context, req *ReferenceRequest) 
 	for _, ar := range ars {
 		a := new(Asset)
 		a.ID = ar.AssetID
-		if e = h.Get(a); e != nil {
+		if e := h.Get(a); e != nil {
 			return res, fmt.Errorf("unable to get asset %s: %s", ar.AssetID, e.Error())
 		}
 		res = append(res, a)
@@ -43,12 +43,13 @@ func (ae *AssetAPIEngine) FindByRefID(ctx *kaos.Context, req *ReferenceRequest) 
 }
 
 func (ae *AssetAPIEngine) MakeRef(ctx *kaos.Context, req *AssetReference) (string, error) {
-	h, e := ctx.DefaultHub()
-	if e != nil {
-		return "", e
+	h := GetTenantDBFromContext(ctx)
+	if h == nil {
+		return "", fmt.Errorf("missing: db")
 	}
 
 	// validate asset
+	var e error
 	a := new(Asset)
 	a.ID = req.AssetID
 	if e = h.Get(a); e != nil {
