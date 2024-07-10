@@ -3,6 +3,7 @@ package kasset
 import (
 	"bytes"
 	"io"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -40,7 +41,11 @@ func NewS3WithConfig(bucket string, config *aws.Config) (*S3Asset, error) {
 			Bucket: aws.String(bucket),
 		}
 		if _, e = s3svc.CreateBucket(createInput); e != nil {
-			return nil, e
+			// fmt.Println(e.Error())
+			if !strings.Contains(e.Error(), s3.ErrCodeBucketAlreadyOwnedByYou) {
+				return nil, e
+			}
+
 		}
 	}
 
