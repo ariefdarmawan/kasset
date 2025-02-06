@@ -45,7 +45,7 @@ func (ae *AssetEngine) View(ctx *kaos.Context, assetid string) ([]byte, error) {
 	lastModified := r.Header.Get("If-Modified-Since")
 	if lastModified != "" {
 		lastModTime, err := time.Parse(http.TimeFormat, lastModified)
-		if err == nil && ast.LastUpdated.Before(lastModTime) {
+		if err == nil && ast.LastUpdated.Before(lastModTime.Add(1*time.Second)) {
 			w.WriteHeader(http.StatusNotModified)
 			ctx.Data().Set("kaos_command_1", "stop")
 			return nil, nil
