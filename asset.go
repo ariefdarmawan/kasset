@@ -1,6 +1,8 @@
 package kasset
 
 import (
+	"time"
+
 	"git.kanosolution.net/kano/dbflex"
 	"git.kanosolution.net/kano/dbflex/orm"
 	"github.com/sebarcode/codekit"
@@ -20,6 +22,7 @@ type Asset struct {
 	Kind              string
 	RefID             string
 	Data              codekit.M
+	LastUpdated       time.Time
 }
 
 func (a *Asset) TableName() string {
@@ -40,6 +43,7 @@ func (a *Asset) PreSave(c dbflex.IConnection) error {
 	if a.ID == "" {
 		a.ID = primitive.NewObjectID().Hex()
 	}
+	a.LastUpdated = time.Now()
 	return nil
 }
 
